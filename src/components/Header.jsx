@@ -1,18 +1,13 @@
+import './Header.css';
+
 function Header() {
   return (
-    <header style={{
-      padding: '1rem 2rem',
-      backgroundColor: '#1a1a1a',
-      borderBottom: '1px solid #333',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'space-between'
-    }}>
-      <h1 style={{ margin: 0, fontSize: '1.5rem' }}>My App</h1>
-      <nav>
-        <a href="#" style={{ marginLeft: '1.5rem', color: '#646cff' }}>Home</a>
-        <a href="#" style={{ marginLeft: '1.5rem', color: '#646cff' }}>About</a>
-        <a href="#" style={{ marginLeft: '1.5rem', color: '#646cff' }}>Contact</a>
+    <header className="header">
+      <h1 className="title">MedTime</h1>
+      <nav className="nav">
+        <a href="#" className="link">Home</a>
+        <a href="#" className="link">About</a>
+        <a href="#" className="link">Contact</a>
       </nav>
     </header>
   );
