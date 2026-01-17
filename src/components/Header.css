@@ -1,6 +1,6 @@
 .header {
   padding: 1rem 2rem;
-  background-color: #E3F2FD;
+  background-color: #FAFCFC;
   border-bottom: 2px solid #4CAF50;
   display: flex;
   align-items: center;
@@ -22,13 +22,13 @@
 
 .link {
   margin-left: 1.5rem;
-  color: #388E3C;
+  color: #1976D2;
   text-decoration: none;
   font-weight: 500;
   transition: color 0.3s ease;
 }
 
 .link:hover {
-  color: #2E7D32;
+  color: #346088;
   text-decoration: underline;
 }
