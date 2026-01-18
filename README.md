@@ -1,5 +1,5 @@
 # Welcome to MedTime!
-![MedTime Logo](https://github.com/kpasag/nwHacks2026/main/public/images/Alarm_Logo.png)
+![MedTime Logo](https://github.com/kpasag/MedTime/blob/main/public/images/alarm_logo.png)
 
 # How to Use MedTime
 
