@@ -21,7 +21,27 @@ admin.initializeApp({
 });
 
 const app = express();
-app.use(cors({ origin: 'https://medtime-f8c50.web.app/', credentials: true }));
+
+// Allow both production and development origins
+const allowedOrigins = [
+  'https://medtime-f8c50.web.app',
+  'https://medtime-f8c50.firebaseapp.com',
+  'http://localhost:5173'
+];
+
+app.use(cors({
+  origin: (origin, callback) => {
+    // Allow requests with no origin (like mobile apps or Postman)
+    if (!origin) return callback(null, true);
+    
+    if (allowedOrigins.indexOf(origin) !== -1) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true
+}));
 
 // Connect to MongoDB
 mongoose.connect(process.env.MONGODB_URI)
