@@ -21,7 +21,7 @@ admin.initializeApp({
 });
 
 const app = express();
-app.use(cors({ origin: 'http://localhost:5173', credentials: true }));
+app.use(cors({ origin: 'https://medtime-f8c50.web.app/', credentials: true }));
 
 // Connect to MongoDB
 mongoose.connect(process.env.MONGODB_URI)
