@@ -1,14 +1,45 @@
-import { useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 import { auth } from '../../firebase.config'
 import { signOut } from 'firebase/auth'
 import { useNavigate } from 'react-router-dom'
 import "./Dashboard.css";
 
 function Dashboard() {
+    const navigate = useNavigate();
+    const user = auth.currentUser;
+
     const [currentPills, setCurrentPills] = useState([]);
     const [notifications, setNotifications] = useState([]);
 
     const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+
+    // Link modal state
+    const [showLinkModal, setShowLinkModal] = useState(false);
+    const [linkType, setLinkType] = useState('caregiver');
+    const [linkEmail, setLinkEmail] = useState('');
+    const [error, setError] = useState('');
+    const [userData, setUserData] = useState(null);
+
+    const handleLogout = async () => {
+        try {
+            await signOut(auth);
+            navigate('/');
+        } catch (err) {
+            console.error('Logout error:', err);
+        }
+    };
+
+    const handleLink = async () => {
+        if (!linkEmail) {
+            setError('Please enter an email');
+            return;
+        }
+
+        setError('');
+        setShowLinkModal(false);
+        setLinkEmail('');
+    };
+
     const [pillForm, setPillForm] = useState({
         pillName: "",
         dosage: "",
