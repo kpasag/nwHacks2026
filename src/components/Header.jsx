@@ -4,12 +4,22 @@ import { Link } from "react-router-dom";
 function Header() {
   return (
     <header className="header">
-      <h1 className="title">MedTime</h1>
+      <h1 className="title">
+        <Link to="/" className="link">
+          MedTime
+        </Link>
+      </h1>
 
       <nav className="nav">
-        <Link to="/" className="link">Home</Link>
-        <Link to="/dashboard" className="link">Dashboard</Link>
-        <Link to="/login" className="link">Login</Link>
+        <Link to="/" className="link">
+          Home
+        </Link>
+        <Link to="/dashboard" className="link">
+          Dashboard
+        </Link>
+        <Link to="/login" className="link">
+          Login
+        </Link>
       </nav>
     </header>
   );
