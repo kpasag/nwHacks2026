@@ -59,9 +59,9 @@ MedTime is built with:
 MedTime was built in **23 hours** during **nwHacks 2026**.
 
 ### Challenges
-
-_(Add details here if you'd like — hackathon judges love this section.)_
-
+- First project for all of us trying to use React.JS
+- Stepped out of comfort zone with the the tech stack
+  
 ### Future Plans
 
 - Mobile, SMS, and email notifications  
