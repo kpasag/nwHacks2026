@@ -1,71 +1,50 @@
-# MedTime
+# Welcome to MedTime!
+![MedTime Logo](https://github.com/kpasag/nwHacks2026/blob/main/public/images/Alarm%20Logo2.png)
 
-![MediTime Logo](https://github.com/kpasag/nwHacks2026/blob/main/public/images/Alarm%20Logo2.png)
+# How to Use MedTime
 
-A simpler way to manage medication — for yourself and the people you care about.
+A simple, reliable way to manage medications for yourself and the people you care about.
 
----
+## 1. Overview
+MedTime is a web-based medication management app that helps users stay on schedule with prescriptions.  
+Each user can track their own medications, receive smart reminders, and optionally connect with caregivers who help monitor missed or late doses.
 
-##  Table of Contents
 
-- [About](#about)
-  - [Features](#features)
-- [Getting Started](#getting-started)
-  - [Caregivers](#caregivers)
-- [What We Used](#what-we-used)
-- [Development](#development)
-  - [Challenges](#challenges)
-  - [Future Plans](#future-plans)
+## 2. Getting Started
+- Add your medications, dosage details, and schedule.
+- Optionally link caregivers or family members to help monitor your health.
+- Your dashboard will show upcoming doses, history, and alerts.
 
----
+## 3. Using MedTime
+1. Check your dashboard for upcoming medications.
+2. When you take a dose, mark it as completed.
+3. If you miss or delay a dose, MedTime logs it and notifies linked caregivers.
+4. Caregivers can view patient dashboards to stay informed in real time.
 
-##  About
+## 4. Caregiver Features
+Caregivers can:
+- View patient medication schedules  
+- See missed or late doses  
+- Receive alerts when something needs attention  
+- Help keep loved ones accountable and safe  
 
-Managing multiple prescriptions shouldn’t feel overwhelming.  
-**MedTime** is a web-based app designed to help you stay on top of your medication schedule — and support loved ones who may need an extra hand.
+Patients can add caregivers using their email or username from the dashboard or profile page.
 
-### Features
+## 5. Staying on Track
+MedTime helps you:
+- Track medication history  
+- Stay consistent with reminders  
+- Share records with doctors  
+- Stay connected with friends, family, or caregivers  
 
-- **Customizable Dosages and Times** to track what’s been taken and what’s coming up next.
-- **Caregiver dashboards** that notify you when someone misses or delays a dose.
-- **Shared accountability** by linking with friends and family.
-- **Medication history tracking** with the ability to share records with healthcare providers.
-
----
-
-##  Getting Started
-
-Create a free account at **[MedTime](https://medtime-s84o.onrender.com/)** and start organizing your medication routine in minutes.
-
-### Caregivers
-
-Add caregivers or patients directly from your dashboard or profile using their email or username.
-
----
-
-##  Tech Stack
-
-MedTime is built with:
-
-- **React**
-- **Node.js**
-- **Firebase Authentication**
-- **MongoDB**
-
----
-
-##  Development
-
-MedTime was built in **23 hours** during **nwHacks 2026**.
-
-### Challenges
-- First project for all of us trying to use React.JS
-- Stepped out of comfort zone with the the tech stack
-  
-### Future Plans
-
+## 6. Future Plans
 - Mobile, SMS, and email notifications  
 - Add prescriptions by snapping a photo  
 - Refill reminders and pharmacy lookup  
 
----
+## Tech Stack
+MedTime is built with:
+- **React**
+- **Node.js**
+- **Firebase Authentication**
+- **MongoDB**
