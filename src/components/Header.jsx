@@ -29,7 +29,7 @@ function Header() {
   return (
     <header className="header">
       <Link to="/" className="link">
-        <img src="./public/images/alarm_logo.png" alt="MedTime Logo" className="logo" />
+        <img src="https://github.com/kpasag/MedTime/blob/main/public/images/alarm_logo.png" alt="MedTime Logo" className="logo" />
       </Link>
 
       <nav className="nav">
