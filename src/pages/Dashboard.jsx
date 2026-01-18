@@ -26,6 +26,7 @@ function Dashboard() {
   ];
 
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+
   const [pillForm, setPillForm] = useState({
     pillName: "",
     dosage: "",
@@ -51,8 +52,6 @@ function Dashboard() {
   const cacheRef = useRef(new Map()); // key: query -> raw normalized list
 
   const totalPills = currentPills.length;
-
-  const openAddModal = () => setIsAddModalOpen(true);
 
   const closeAddModal = () => {
     setIsAddModalOpen(false);
@@ -362,7 +361,7 @@ function Dashboard() {
             <button
               type="button"
               className="pill-card add-card"
-              onClick={openAddModal}
+              onClick={() => setIsAddModalOpen(true)}
             >
               <span className="plus-sign">+</span>
               <div>Add Pill</div>
