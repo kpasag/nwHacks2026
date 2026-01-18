@@ -1,7 +1,6 @@
 .dashboard-page {
     min-height: 100vh;
     background-color: #fff;
-    /* white background */
     font-family: 'Roboto', Arial, sans-serif;
     display: flex;
     flex-direction: column;
@@ -49,13 +48,11 @@
     margin-top: 20px;
     display: flex;
     gap: 40px;
-    /* REMOVE any background color here! */
-    /* background-color: transparent or unset */
     background-color: transparent;
 }
 
-/* Left side: Current Pills - take half width */
-.current-pills-section {
+.current-pills-section,
+.notifications-section {
     flex: 1;
     display: flex;
     flex-direction: column;
@@ -66,15 +63,6 @@
     flex-wrap: wrap;
     gap: 20px;
 }
-
-/* Right side: Notifications - take half width */
-.notifications-section {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-}
-
-/* Keep the rest the same... */
 
 .pill-card {
     background: white;
@@ -91,20 +79,33 @@
     position: relative;
     font-weight: 500;
     color: #2c3e50;
+    transition: box-shadow 0.3s ease, transform 0.2s ease;
 }
 
-.pill-card .pill-header {
+.pill-card.clickable {
+    cursor: pointer;
+    border: 2px solid #27ae60;
+    box-shadow: 0 0 8px #27ae60aa;
+}
+
+.pill-card.clickable:hover {
+    box-shadow: 0 0 12px #27ae60cc;
+    transform: translateY(-2px);
+}
+
+.pill-card.late {
+    border-color: #e74c3c;
+    box-shadow: 0 0 12px #e74c3caa;
+}
+
+.pill-header {
     display: flex;
     justify-content: space-between;
     font-size: 1.2rem;
 }
 
-.pill-card .medicine-name {
+.medicine-name {
     font-weight: 700;
-}
-
-.pill-card .status-icon {
-    font-size: 1.5rem;
 }
 
 .status-icon.taken {
@@ -119,7 +120,7 @@
     color: #f39c12;
 }
 
-.pill-card .pill-details {
+.pill-details {
     font-size: 0.9rem;
     display: flex;
     flex-direction: column;

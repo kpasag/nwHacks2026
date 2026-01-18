@@ -1,98 +1,120 @@
-import { useState, useEffect } from 'react'
+import { useEffect, useState, useEffect } from "react";
 import { auth } from '../../firebase.config'
 import { signOut } from 'firebase/auth'
 import { useNavigate } from 'react-router-dom'
-import './Dashboard.css'
+import "./Dashboard.css";
 
 function Dashboard() {
-    const [user, setUser] = useState(null)
-    const [userData, setUserData] = useState(null)
-    const [linkEmail, setLinkEmail] = useState('')
-    const [showLinkModal, setShowLinkModal] = useState(false)
-    const [linkType, setLinkType] = useState('')
-    const [error, setError] = useState('')
-    const navigate = useNavigate()
+    const [currentPills, setCurrentPills] = useState([]);
+    const [notifications, setNotifications] = useState([]);
 
-    const [currentPills, setCurrentPills] = useState([
-        { id: 1, name: 'John Doe', medicine: 'Aspirin', time: '08:00 AM', status: 'missed' },
-        { id: 2, name: 'Jane Smith', medicine: 'Vitamin D', time: '01:00 PM', status: 'taken' },
-    ])
+    const [isAddModalOpen, setIsAddModalOpen] = useState(false);
+    const [pillForm, setPillForm] = useState({
+        pillName: "",
+        dosage: "",
+        takeTimes: [""],
+        intervalDays: 1,
+    });
 
-    const notifications = [
-        { id: 1, message: 'Aspirin taken', date: 'Jan 15, 08:05' },
-        { id: 2, message: 'Vitamin D missed', date: 'Jan 14, 13:30' },
-        { id: 3, message: 'New Vitamin C scheduled', date: 'Jan 13, 09:00' },
-    ]
+    const totalPills = currentPills.length;
+    const bufferMinutes = 5; // clickable window
+    const missedAfterMinutes = 15; // mark as late after 15 minutes
+
+    const openAddModal = () => setIsAddModalOpen(true);
+    const closeAddModal = () => {
+        setIsAddModalOpen(false);
+        setPillForm({ pillName: "", dosage: "", takeTimes: [""], intervalDays: 1 });
+    };
 
     useEffect(() => {
-        const currentUser = auth.currentUser
-        if (currentUser) {
-            setUser(currentUser)
-            fetchUserData(currentUser)
-        }
-    }, [])
+        if (!isAddModalOpen) return;
+        const onKeyDown = (e) => {
+            if (e.key === "Escape") closeAddModal();
+        };
+        window.addEventListener("keydown", onKeyDown);
+        return () => window.removeEventListener("keydown", onKeyDown);
+    }, [isAddModalOpen]);
 
-    const fetchUserData = async (currentUser) => {
-        try {
-            const token = await currentUser.getIdToken()
-            const res = await fetch('http://localhost:3000/api/users/me', {
-                headers: { 'Authorization': `Bearer ${token}` }
-            })
-            if (res.ok) {
-                const data = await res.json()
-                setUserData(data)
-            }
-        } catch (error) {
-            console.error('Error fetching user data:', error)
-        }
-    }
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setPillForm((prev) => ({
+            ...prev,
+            [name]: name === "intervalDays" ? Number(value) : value,
+        }));
+    };
 
-    const handleLogout = async () => {
-        await signOut(auth)
-        navigate('/login')
-    }
+    const updateTimeAtIndex = (index, value) => {
+        setPillForm((prev) => {
+            const next = [...prev.takeTimes];
+            next[index] = value;
+            return { ...prev, takeTimes: next };
+        });
+    };
 
-    const handleLink = async () => {
-        if (!linkEmail.trim()) return
-        setError('')
+    const addTimeField = () => {
+        setPillForm((prev) => ({ ...prev, takeTimes: [...prev.takeTimes, ""] }));
+    };
 
-        try {
-            const token = await auth.currentUser.getIdToken()
-            const endpoint = linkType === 'caregiver' ? 'link-caregiver' : 'link-patient'
+    const removeTimeField = (index) => {
+        setPillForm((prev) => {
+            const next = prev.takeTimes.filter((_, i) => i !== index);
+            return { ...prev, takeTimes: next.length ? next : [""] };
+        });
+    };
 
-            const res = await fetch(`http://localhost:3000/api/users/${endpoint}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify({ email: linkEmail })
-            })
+    const formatTime = (value) => {
+        if (!value) return "";
+        const d = new Date(`1970-01-01T${value}:00`);
+        if (Number.isNaN(d.getTime())) return value;
+        return d.toLocaleTimeString(undefined, { hour: "numeric", minute: "2-digit" });
+    };
 
-            if (res.ok) {
-                alert(`${linkType === 'caregiver' ? 'Caregiver' : 'Patient'} linked successfully!`)
-                setShowLinkModal(false)
-                setLinkEmail('')
-                fetchUserData(auth.currentUser)
-            } else {
-                const data = await res.json()
-                setError(data.error || 'Failed to link')
-            }
-        } catch (error) {
-            setError('Error linking user')
-        }
-    }
+    const frequencyText = (days) => (days === 1 ? "daily" : `every ${days} days`);
 
-    const addNewPill = () => {
-        const newPill = {
-            id: Date.now(),
-            name: 'New Person',
-            medicine: 'New Medicine',
-            time: '12:00 PM',
-            status: 'pending',
-        }
-        setCurrentPills([...currentPills, newPill])
-    }
+    const canTakeNow = (rawTimes) => {
+        if (!rawTimes || rawTimes.length === 0) return false;
+        const now = new Date();
+        const nowMinutes = now.getHours() * 60 + now.getMinutes();
+        return rawTimes.some((timeStr) => {
+            const [h, m] = timeStr.split(":").map(Number);
+            const pillMinutes = h * 60 + m;
+            return Math.abs(nowMinutes - pillMinutes) <= bufferMinutes;
+        });
+    };
+
+    const isLate = (rawTimes) => {
+        if (!rawTimes || rawTimes.length === 0) return false;
+        const now = new Date();
+        return rawTimes.some((timeStr) => {
+            const [h, m] = timeStr.split(":").map(Number);
+            const pillTime = new Date();
+            pillTime.setHours(h, m, 0, 0);
+            return now - pillTime > missedAfterMinutes * 60 * 1000;
+        });
+    };
+
+    const lateMinutes = (rawTimes) => {
+        const now = new Date();
+        let maxLate = 0;
+        rawTimes.forEach((timeStr) => {
+            const [h, m] = timeStr.split(":").map(Number);
+            const pillTime = new Date();
+            pillTime.setHours(h, m, 0, 0);
+            const diff = Math.floor((now - pillTime) / 60000);
+            if (diff > maxLate) maxLate = diff;
+        });
+        return maxLate;
+    };
+
+    const takePill = (id, medicine, rawTimes) => {
+        setCurrentPills((prev) => prev.filter((pill) => pill.id !== id));
+
+        const lateBy = isLate(rawTimes) ? ` (Late by ${lateMinutes(rawTimes)} min)` : "";
+        setNotifications((prev) => [
+            { id: Date.now(), message: `${medicine} taken${lateBy}`, date: new Date().toLocaleString() },
+            ...prev,
+        ]);
+    };
 
     return (
         <div className="dashboard-page">
@@ -135,37 +157,48 @@ function Dashboard() {
                     )}
                 </section>
 
-                {/* Current Pills Section */}
                 <section className="current-pills-section">
-                    <h2>Current Pills</h2>
+                    <h2>
+                        Current Pills <span style={{ fontWeight: 500, fontSize: "0.95rem" }}>({totalPills} total)</span>
+                    </h2>
 
                     <div className="pill-cards-container">
-                        {currentPills.map(({ id, name, medicine, time, status }) => (
-                            <div key={id} className="pill-card">
-                                <div className="pill-header">
-                                    <span className="medicine-name">{medicine}</span>
-                                    <span className={`status-icon ${status}`}>
-                                        {status === 'taken' && '✔️'}
-                                        {status === 'missed' && '❌'}
-                                        {status === 'pending' && '⏳'}
-                                    </span>
-                                </div>
+                        {currentPills.map(({ id, name, medicine, time, rawTimes, status }) => {
+                            const clickable = true; // always clickable
+                            const late = isLate(rawTimes);
+                            return (
+                                <div
+                                    key={id}
+                                    className={`pill-card clickable ${late ? "late" : ""}`}
+                                    onClick={() => takePill(id, medicine, rawTimes)}
+                                    title={late ? `Late by ${lateMinutes(rawTimes)} min` : "Click to take"}
+                                    role="button"
+                                    tabIndex={0}
+                                >
+                                    <div className="pill-header">
+                                        <span className="medicine-name">{medicine}</span>
+                                        <span className={`status-icon ${status}`}>
+                                            {status === "taken" && "✔️"}
+                                            {status === "missed" && "❌"}
+                                            {status === "pending" && "⏳"}
+                                        </span>
+                                    </div>
 
-                                <div className="pill-details">
-                                    <div className="person-name">{name}</div>
-                                    <div className="pill-time">{time}</div>
+                                    <div className="pill-details">
+                                        <div className="person-name">{name}</div>
+                                        <div className="pill-time">{time}</div>
+                                    </div>
                                 </div>
-                            </div>
-                        ))}
+                            );
+                        })}
 
-                        <button className="pill-card add-card" onClick={addNewPill}>
+                        <button type="button" className="pill-card add-card" onClick={() => setIsAddModalOpen(true)}>
                             <span className="plus-sign">＋</span>
                             <div>Add Pill</div>
                         </button>
                     </div>
                 </section>
 
-                {/* Notifications Section */}
                 <section className="notifications-section">
                     <h2>Notifications</h2>
                     {notifications.map(({ id, message, date }) => (
@@ -201,7 +234,7 @@ function Dashboard() {
                 </div>
             )}
         </div>
-    )
+    );
 }
 
-export default Dashboard
+export default Dashboard;
