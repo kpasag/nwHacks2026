@@ -935,7 +935,7 @@ function Dashboard() {
       </header>
 
       <main className="dashboard-content">
-        <div className="dashboard-user-info">
+        <div className="dashboard-user-info">  
           <section className="current-pills-section">
             <h2>
               Current Pills{" "}
@@ -943,12 +943,14 @@ function Dashboard() {
                 ({totalPills} total)
               </span>
             </h2>
+
             <div className="pill-cards-container">
               {currentPills.map(({ id, name, medicine, time, status, intervalDays }) => {
                 // Extract medicine name and dosage
                 const medicineMatch = medicine.match(/^(.+?)\s*\((.+?)\)$/);
                 const medicineName = medicineMatch ? medicineMatch[1] : medicine;
                 const dosage = medicineMatch ? medicineMatch[2] : '';
+
                 return (
                   <div
                     key={id}
@@ -1039,6 +1041,7 @@ function Dashboard() {
                         )}
                       </div>
                     </div>
+
                     <div className="pill-details">
                       <div className="person-name">{name}</div>
                       <div className="pill-time">{time}</div>
@@ -1054,6 +1057,7 @@ function Dashboard() {
                   </div>
                 );
               })}
+
               <button
                 type="button"
                 className="pill-card add-card"
@@ -1065,221 +1069,73 @@ function Dashboard() {
             </div>
           </section>
           <section className="notifications-section">
-            <h2>Notifications</h2>
-            {notifications.length === 0 ? (
+            <div className="notifications-header">
+              <h2>
+                Notifications
+                {unreadCount > 0 && (
+                  <span className="unread-badge">{unreadCount}</span>
+                )}
+              </h2>
+              {notifications.length > 0 && (
+                <button
+                  className="mark-all-read-btn"
+                  onClick={markAllNotificationsRead}
+                >
+                  Mark all read
+                </button>
+              )}
+            </div>
+
+            <div className="notification-filters">
+              {['all', 'upcoming', 'pending', 'taken', 'missed'].map((filter) => (
+                <button
+                  key={filter}
+                  className={`filter-btn ${notificationFilter === filter ? 'active' : ''} ${filter !== 'all' ? filter : ''}`}
+                  onClick={() => setNotificationFilter(filter)}
+                >
+                  {filter.charAt(0).toUpperCase() + filter.slice(1)}
+                </button>
+              ))}
+            </div>
+
+            {loadingNotifications ? (
               <div className="notification-placeholder">
-                No new notifications
+                Loading notifications...
+              </div>
+            ) : notifications.length === 0 ? (
+              <div className="notification-placeholder">
+                No {notificationFilter !== 'all' ? notificationFilter : ''} notifications
               </div>
             ) : (
-              notifications.map(({ id, message, date }) => (
-                <div key={id} className="notification-item">
-                  <div>{message}</div>
-                  <small>{date}</small>
-                </div>
-              ))
+              <div className="notifications-list">
+                {notifications.map((notification) => (
+                  <div
+                    key={notification._id}
+                    className={`notification-item ${notification.type} ${notification.read ? 'read' : 'unread'}`}
+                    onClick={() => !notification.read && markNotificationRead(notification._id)}
+                  >
+                    <div className="notification-content">
+                      <div className="notification-type-badge">{notification.type}</div>
+                      <div className="notification-title">{notification.title}</div>
+                      <div className="notification-message">{notification.message}</div>
+                      <small className="notification-time">{formatNotificationDate(notification.createdAt)}</small>
+                    </div>
+                    <button
+                      className="notification-delete-btn"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        deleteNotification(notification._id);
+                      }}
+                      title="Delete notification"
+                    >
+                      &times;
+                    </button>
+                  </div>
+                ))}
+              </div>
             )}
           </section>
         </div>
-        <section className="current-pills-section">
-          <h2>
-            Current Pills{" "}
-            <span style={{ fontWeight: 500, fontSize: "0.95rem" }}>
-              ({totalPills} total)
-            </span>
-          </h2>
-
-          <div className="pill-cards-container">
-            {currentPills.map(({ id, name, medicine, time, status, intervalDays }) => {
-              // Extract medicine name and dosage
-              const medicineMatch = medicine.match(/^(.+?)\s*\((.+?)\)$/);
-              const medicineName = medicineMatch ? medicineMatch[1] : medicine;
-              const dosage = medicineMatch ? medicineMatch[2] : '';
-
-              return (
-                <div
-                  key={id}
-                  className={`pill-card ${status} clickable`}
-                  onClick={() => {
-                    handleMarkAsTaken(id);
-                  }}
-                >
-                  <div className="pill-header">
-                    <div className="pill-header-left">
-                      <span className={`status-badge ${status}`}>
-                        {status === "taken" && "Taken"}
-                        {status === "missed" && "Missed"}
-                        {status === "pending" && "Pending"}
-                        {status === "upcoming" && "Upcoming"}
-                      </span>
-                      <div className="medicine-info">
-                        <span
-                          className="medicine-name"
-                          style={{
-                            fontSize: medicineName.length > 20 ? '0.85rem' :
-                              medicineName.length > 15 ? '0.95rem' : '1.15rem'
-                          }}
-                        >
-                          {medicineName}
-                        </span>
-                        {dosage && <span className="medicine-dosage">{dosage}</span>}
-                      </div>
-                    </div>
-                    <div className="pill-menu-wrapper">
-                      <button
-                        className="pill-menu-btn"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setOpenMenuId(openMenuId === id ? null : id);
-                        }}
-                        title="Options"
-                      >
-                        •••
-                      </button>
-                      {openMenuId === id && (
-                        <div className="pill-dropdown-menu">
-                          {(status === 'pending' || status === 'upcoming' || status === 'missed') && (
-                            <button
-                              className="dropdown-item"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setOpenMenuId(null);
-                                handleMarkAsTaken(id);
-                              }}
-                            >
-                              Mark as Taken
-                            </button>
-                          )}
-                          {status === 'taken' && (
-                            <button
-                              className="dropdown-item"
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setOpenMenuId(null);
-                                handleMarkAsTaken(id);
-                              }}
-                            >
-                              Mark as Pending
-                            </button>
-                          )}
-                          <button
-                            className="dropdown-item"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setOpenMenuId(null);
-                              handleEditPill(id);
-                            }}
-                          >
-                            Edit
-                          </button>
-                          <button
-                            className="dropdown-item delete"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              setOpenMenuId(null);
-                              handleDeletePill(id);
-                            }}
-                          >
-                            Delete
-                          </button>
-                        </div>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="pill-details">
-                    <div className="person-name">{name}</div>
-                    <div className="pill-time">{time}</div>
-                    {intervalDays && (
-                      <div className="pill-frequency">
-                        {intervalDays === 1 ? 'Daily' :
-                          intervalDays === 7 ? 'Weekly' :
-                            intervalDays === 30 ? 'Monthly' :
-                              `Every ${intervalDays} days`}
-                      </div>
-                    )}
-                  </div>
-                </div>
-              );
-            })}
-
-            <button
-              type="button"
-              className="pill-card add-card"
-              onClick={() => setIsAddModalOpen(true)}
-            >
-              <span className="plus-sign">+</span>
-              <div>Add Pill</div>
-            </button>
-          </div>
-        </section>
-
-        <section className="notifications-section">
-          <div className="notifications-header">
-            <h2>
-              Notifications
-              {unreadCount > 0 && (
-                <span className="unread-badge">{unreadCount}</span>
-              )}
-            </h2>
-            {notifications.length > 0 && (
-              <button
-                className="mark-all-read-btn"
-                onClick={markAllNotificationsRead}
-              >
-                Mark all read
-              </button>
-            )}
-          </div>
-
-          <div className="notification-filters">
-            {['all', 'upcoming', 'pending', 'taken', 'missed'].map((filter) => (
-              <button
-                key={filter}
-                className={`filter-btn ${notificationFilter === filter ? 'active' : ''} ${filter !== 'all' ? filter : ''}`}
-                onClick={() => setNotificationFilter(filter)}
-              >
-                {filter.charAt(0).toUpperCase() + filter.slice(1)}
-              </button>
-            ))}
-          </div>
-
-          {loadingNotifications ? (
-            <div className="notification-placeholder">
-              Loading notifications...
-            </div>
-          ) : notifications.length === 0 ? (
-            <div className="notification-placeholder">
-              No {notificationFilter !== 'all' ? notificationFilter : ''} notifications
-            </div>
-          ) : (
-            <div className="notifications-list">
-              {notifications.map((notification) => (
-                <div
-                  key={notification._id}
-                  className={`notification-item ${notification.type} ${notification.read ? 'read' : 'unread'}`}
-                  onClick={() => !notification.read && markNotificationRead(notification._id)}
-                >
-                  <div className="notification-content">
-                    <div className="notification-type-badge">{notification.type}</div>
-                    <div className="notification-title">{notification.title}</div>
-                    <div className="notification-message">{notification.message}</div>
-                    <small className="notification-time">{formatNotificationDate(notification.createdAt)}</small>
-                  </div>
-                  <button
-                    className="notification-delete-btn"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      deleteNotification(notification._id);
-                    }}
-                    title="Delete notification"
-                  >
-                    &times;
-                  </button>
-                </div>
-              ))}
-            </div>
-          )}
-        </section>
         <section className="patients-list">
           <h2>Patients</h2>
           {patientList?.linkedPatients && patientList.linkedPatients.length > 0 ? (
@@ -1300,9 +1156,7 @@ function Dashboard() {
             <div className="profile-muted">No patients linked yet.</div>
           )}
         </section>
-
       </main>
-
       {isAddModalOpen && (
         <div
           className="modal-overlay"
