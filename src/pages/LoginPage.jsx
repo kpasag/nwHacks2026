@@ -5,7 +5,6 @@ import {
   signInWithEmailAndPassword,
   createUserWithEmailAndPassword
 } from 'firebase/auth';
-import { useNavigate } from 'react-router-dom'; // <-- for navigation
 import './LoginPage.css';
 
 function LoginPage() {
@@ -16,6 +15,8 @@ function LoginPage() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
