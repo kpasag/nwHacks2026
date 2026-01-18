@@ -1,15 +1,28 @@
-import './Dashboard.css';
+import { useState } from 'react'
+import './Dashboard.css'
 
 function Dashboard() {
-    const currentPills = [
-        { id: 1, name: 'Aspirin', time: '08:00 AM' },
-        { id: 2, name: 'Vitamin D', time: '01:00 PM' }
-    ]
+    const [currentPills, setCurrentPills] = useState([
+        { id: 1, name: 'John Doe', medicine: 'Aspirin', time: '08:00 AM', status: 'missed' },
+        { id: 2, name: 'Jane Smith', medicine: 'Vitamin D', time: '01:00 PM', status: 'taken' },
+    ])
 
     const notifications = [
         { id: 1, message: 'Aspirin taken', date: 'Jan 15, 08:05' },
-        { id: 2, message: 'Vitamin D missed', date: 'Jan 14, 13:30' }
+        { id: 2, message: 'Vitamin D missed', date: 'Jan 14, 13:30' },
+        { id: 3, message: 'New Vitamin C scheduled', date: 'Jan 13, 09:00' },
     ]
+
+    const addNewPill = () => {
+        const newPill = {
+            id: Date.now(),
+            name: 'New Person',
+            medicine: 'New Medicine',
+            time: '12:00 PM',
+            status: 'pending',
+        }
+        setCurrentPills([...currentPills, newPill])
+    }
 
     return (
         <div className="dashboard-page">
@@ -18,28 +31,45 @@ function Dashboard() {
             </header>
 
             <main className="dashboard-content">
-                <section className="card">
+                {/* Current Pills Section */}
+                <section className="current-pills-section">
                     <h2>Current Pills</h2>
-                    <ul>
-                        {currentPills.map(pill => (
-                            <li key={pill.id}>
-                                <span>💊 {pill.name}</span>
-                                <span>{pill.time}</span>
-                            </li>
+
+                    <div className="pill-cards-container">
+                        {currentPills.map(({ id, name, medicine, time, status }) => (
+                            <div key={id} className="pill-card">
+                                <div className="pill-header">
+                                    <span className="medicine-name">{medicine}</span>
+                                    <span className={`status-icon ${status}`}>
+                                        {status === 'taken' && '✔️'}
+                                        {status === 'missed' && '❌'}
+                                        {status === 'pending' && '⏳'}
+                                    </span>
+                                </div>
+
+                                <div className="pill-details">
+                                    <div className="person-name">{name}</div>
+                                    <div className="pill-time">{time}</div>
+                                </div>
+                            </div>
                         ))}
-                    </ul>
+
+                        <button className="pill-card add-card" onClick={addNewPill}>
+                            <span className="plus-sign">＋</span>
+                            <div>Add Pill</div>
+                        </button>
+                    </div>
                 </section>
 
-                <section className="card">
-                    <h2>Past Notifications</h2>
-                    <ul>
-                        {notifications.map(note => (
-                            <li key={note.id}>
-                                <span>{note.message}</span>
-                                <small>{note.date}</small>
-                            </li>
-                        ))}
-                    </ul>
+                {/* Notifications Section */}
+                <section className="notifications-section">
+                    <h2>Notifications</h2>
+                    {notifications.map(({ id, message, date }) => (
+                        <div key={id} className="notification-item">
+                            <div>{message}</div>
+                            <small>{date}</small>
+                        </div>
+                    ))}
                 </section>
             </main>
         </div>
