@@ -1,12 +1,19 @@
+import { useNavigate } from 'react-router-dom';
 import './LandingPage.css';
+import { Link } from "react-router-dom";
 
 function LandingPage() {
+  const navigate = useNavigate();
+
   return (
     <main className="landing-page">
       <section className="hero-section">
         <h1 className="hero-title">Welcome to MedTime</h1>
         <p className="hero-subtitle">The best way to manage your prescriptions and medications</p>
-        <button className="hero-btn">Get Started</button>
+
+        <Link to="/login">
+          <button className="hero-btn">Get Started</button>
+        </Link>
       </section>
 
       <section className="landing-section">
@@ -43,12 +50,7 @@ function LandingPage() {
 
       <footer className="contact-section">
         <h2 className="section-title">Contact Us</h2>
-        <p className="contact-email">Email: <a href="mailto:info@medtime.com">info@medtime.com</a></p>
-        <ul className="social-links">
-          <li><a href="#">Facebook</a></li>
-          <li><a href="#">Twitter</a></li>
-          <li><a href="#">Instagram</a></li>
-        </ul>
+        <p className="contact-email">Email: <a href="mailto:medtimedev@gmail.com">medtimedev@gmail.com</a></p>
       </footer>
     </main>
   );
