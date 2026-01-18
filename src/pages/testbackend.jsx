@@ -50,8 +50,7 @@ function TestBackend() {
             <p>{repeatFrequency}</p>
             <p>{dosage}</p>
           </div>
-        )
-        )}
+        ))}
       </div>
     </>
   )
