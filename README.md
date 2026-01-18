@@ -9,7 +9,6 @@ A simple, reliable way to manage medications for yourself and the people you car
 MedTime is a web-based medication management app that helps users stay on schedule with prescriptions.  
 Each user can track their own medications, receive smart reminders, and optionally connect with caregivers who help monitor missed or late doses.
 
-Try it live: **[MedTime](https://medtime-s84o.onrender.com/)**
 
 ## 2. Getting Started
 - Create a free account at **[MedTime](https://medtime-s84o.onrender.com/)**.
