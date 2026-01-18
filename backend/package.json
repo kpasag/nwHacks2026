@@ -1,0 +1,21 @@
+{
+  "name": "medtime-backend",
+  "version": "1.0.0",
+  "description": "Backend server for MedTime with MongoDB and Firebase Auth",
+  "main": "server.js",
+  "type": "commonjs",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "mongoose": "^8.0.3",
+    "dotenv": "^16.3.1",
+    "firebase-admin": "^12.0.0",
+    "cors": "^2.8.5"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.2"
+  }
+}

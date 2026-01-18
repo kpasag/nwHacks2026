@@ -14,7 +14,7 @@ admin.initializeApp({
 
 const app = express();
 const { verifyToken } = require('./middleware/authMiddleware');
-
+const { uploadImage } = require('./middleware/image_upload');
 app.use(express.json());
 
 // Test route - protected
@@ -27,6 +27,16 @@ app.get('/api/test', verifyToken, (req, res) => {
     }
   });
 });
+
+// Uploading images to Cloudinary
+app.post('/api/upload-image', uploadImage, async (req, res) => {
+  const image = req.file;
+  const result = await cloudinary.uploader.upload(image);
+
+  res.json(result);
+  console.log(result);
+});
+
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
